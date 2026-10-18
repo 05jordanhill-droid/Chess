@@ -2,49 +2,27 @@ from Conditions import *
 
 class Move:
     def __init__(self, x_offset:int=0, y_offset:int=0, continuous:bool=False, jump:bool=False, increment:int=1, conditions:list=[], extra_functions:list=[], direction:int=1, special=False):
+        # bishop, rook, queen
         self.continuous = continuous
+        # knight
         self.jump = jump
+        # castling, pawn capturing, pawn movement
         self.conditions = conditions
+
         self.x_offset = x_offset * direction
         self.y_offset = y_offset * direction
+
         self.increment = increment
         self.extra_functions = extra_functions
         self.direction = direction
+
+        # Special Moves are skipped in certain cases to prevent circular processing
         self.special = special
 
+    # This is always run with the Move, but the extra_functions can be empty as desired
     def run(self, piece):
         for extra_function in self.extra_functions:
             extra_function()
-
-
-    def add_x_offset(self, x_offset:int):
-        self.x_offset = x_offset
-
-
-    def add_y_offset(self, y_offset:int):
-        self.y_offset = y_offset
-
-
-    def make_continuous(self, set_true:bool=True, increment:int=1):
-        if set_true:
-            self.continuous = True
-            self.increment = increment
-        else:
-            self.continuous = False
-
-
-    def let_jump(self, set_true:bool=True):
-        if set_true:
-            self.jump = True
-        else:
-            self.jump = False
-
-
-    def add_condition(self, condition):
-        self.conditions.append(condition)
-
-    def add_extra_function(self, extra_function):
-        self.extra_functions.append(extra_function)
 
 
 

@@ -82,18 +82,20 @@ class ArcadeGameView(arcade.Window):
 
         # static checkered board
         self.background_sprites = ArcadeSupport.grid_to_list(game.empty_board)
-        # Moving pieces
+        # Moving pieces board
         self.piece_sprites = ArcadeSupport.grid_to_list(game.board)
+
         self.move_sprites = arcade.SpriteList()
         self.message_sprites = arcade.SpriteList()
 
-        x = BASE_X - (5 * INCREMENT)
-        y = BASE_Y + (4 * INCREMENT)
-
+        # Various possible messages to display next to the board
         self.black_turn = arcade.Sprite("icons/black_turn.png")
         self.white_turn = arcade.Sprite("icons/white_turn.png")
         self.white_win = arcade.Sprite("icons/white_win.png")
         self.black_win = arcade.Sprite("icons/black_win.png")
+
+        x = BASE_X - (5 * INCREMENT)
+        y = BASE_Y + (4 * INCREMENT)
 
         self.black_turn.center_x = x
         self.black_turn.center_y = y
@@ -107,6 +109,7 @@ class ArcadeGameView(arcade.Window):
         self.black_win.center_x = x
         self.black_win.center_y = y
 
+    # Required method to get the game to run properly on Arcade
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
         pass
@@ -119,6 +122,7 @@ class ArcadeGameView(arcade.Window):
             (x, y), self.move_sprites
         )
 
+        # Choice Sprites are visualized and clickable only after clicking a piece Sprite, displaying that piece's possible moves
         if choices:
             arcade.play_sound(arcade.load_sound("sounds/move.wav"))
             move = ArcadeSupport.get_move(choices[0], self.game, BASE_X, BASE_Y, INCREMENT)
@@ -131,6 +135,7 @@ class ArcadeGameView(arcade.Window):
 
             piece:Piece = ArcadeSupport.get_piece(self.game.board, pieces[0], BASE_X, BASE_Y, INCREMENT)
 
+            # This manages who can take a turn at different times
             if piece.direction == piece.board.turn:
                 self.game.update()
 
@@ -139,6 +144,7 @@ class ArcadeGameView(arcade.Window):
                 self.game.focus_piece = piece
                 self.game.focus_moves = moves
 
+                # Displaying the move options
                 for move in moves:
                     option = arcade.Sprite(arcade.load_texture("icons/option.png"))
                     option.center_x = (move[0] * INCREMENT) + BASE_X
@@ -166,6 +172,8 @@ class ArcadeGameView(arcade.Window):
         for team in self.game.teams:
             choices = []
             king_captured = True
+
+            # tracks if there are any possible moves and if the King has been captured
             for piece in team.team:
                 if piece.crucial:
                     king_captured = False

@@ -21,6 +21,7 @@ INCREMENT = 16
 class Board:
     def __init__(self, width:int, height:int, white_icon:str="", black_icon:str=""):
         self.board:list[list[Piece]] = []
+        # width and height adjusted to account for indexing behavior
         self.width = width-1
         self.height = height-1
         self.teams:list[Team] = []
@@ -28,6 +29,7 @@ class Board:
         self.focus_piece:Piece = ""
         self.focus_moves:list[Move] = ""
 
+        # Start game with the player on the bottom, or facing up/forward
         self.turn = 1
 
         self.white = white_icon
@@ -42,6 +44,7 @@ class Board:
             for x in range(width):
                 row.append(Empty(self, x, y, "null"))
 
+                # alternate between black and white tiling properly
                 if y%2 == 1:
                     if x%2 == 1:
                         empty_row.append(self.black)
@@ -56,14 +59,15 @@ class Board:
             self.board.append(row)
             self.empty_board.append(empty_row)
 
-
     def update(self):
         for team in self.teams:
+            # iterates through every piece to ensure they are in the board according to their given x and y
             for piece in team.team:
                 self.board[piece.y][piece.x] = piece
                 piece.icon.center_x = (piece.x * INCREMENT) + BASE_X
                 piece.icon.center_y = (piece.y * INCREMENT) + BASE_Y
 
+            # display captured pieces
             x = BASE_X
             for piece in team.captured:
                 if piece.direction == 1:
@@ -76,10 +80,12 @@ class Board:
 
                 x += INCREMENT
 
+        # ensure all possible moves are correct
         for team in self.teams:
             for piece in team.team:
                 piece.update_possible_moves()
 
+        # check for checks and if so, recalculate all possible moves of allies to only be allowed moves that removes the check
         for team in self.teams:
             for piece in team.team:
                 if piece.crucial:
@@ -92,26 +98,15 @@ class Board:
                                     new_moves.append(move)
                             piece_.possible_moves = new_moves
 
-    def add_team(self, team:Team):
-        self.teams.append(team)
-
-    def temp_remove(self, piece:Piece):
-        self.board[piece.y][piece.x] = Empty(self, piece.x, piece.y, "null")
-        # print("test")
-    def re_add(self, piece):
-        self.board[piece.y][piece.x] = piece
-
-    def add_piece(self, x:int, y:int, piece:Piece):
-        self.board[y][x] = piece
-    def remove_piece(self, x:int, y:int, piece:Piece):
-        self.board[y][x] = Empty()
-
+    # easily get a piece based on the piec itself and a given offset (correct direction is assumed to already be implemented)
     def get_piece(self, piece:Piece, x_offset:int, y_offset:int):
         x:int = piece.x + (x_offset)
         y:int = piece.y + (y_offset)
         return self.board[y][x]
 
+    # creates a copy of the board, makes a move, sees if it removes a piece from check, and returns a proper boolean
     def test_move_check(self, piece:Piece, x:int, y:int, move:Move, checked:Piece=None):
+        # for if you're moving a piece to see if it is going into check, rather than seeing if moving a piece will remove a different piece from check
         if checked == None:
             checked = piece
 
@@ -124,7 +119,9 @@ class Board:
         stops_check = not Conditions.is_in_check(hypo_checked)
         return stops_check
 
+    # the central function for moving a piece on the board
     def move_piece(self, piece:Piece, x:int, y:int, move:Move, skip_update:bool=False):
+        # always ran before to ensure potential pieces don't get erased by the main piece that is saved here
         move.run(piece)
 
         spot = self.board[y][x]
@@ -142,28 +139,30 @@ class Board:
 
         piece.times_moved += 1
 
+        # prevents circular processing in special cases
         if not skip_update:
             self.update()
 
+        # end your turn
         self.turn *= -1
 
     def move(self, piece:Piece, x:int, y:int):
-            spot = self.board[y][x]
-    
-            self.board[y][x] = piece
-            self.board[piece.y][piece.x] = Empty(self, piece.x, piece.y, "null")
-    
-            piece.x = x
-            piece.y = y
-    
-            if not isinstance(spot, Empty):
-                spot.team.captured.append(spot)
-                spot.team.team.remove(spot)
-    
-            self.update()
+        spot = self.board[y][x]
+
+        self.board[y][x] = piece
+        self.board[piece.y][piece.x] = Empty(self, piece.x, piece.y, "null")
+
+        piece.x = x
+        piece.y = y
+
+        if not isinstance(spot, Empty):
+            spot.team.captured.append(spot)
+            spot.team.team.remove(spot)
+
+        self.update()
 
 
-    # Helpers
+    # collects the potential captures for any given piece
     def get_captures(self, piece:Piece, get_empty_slots:bool=False):
         captures:list[Piece] = []
 
@@ -174,7 +173,7 @@ class Board:
 
         return captures
 
-    
+    # returns the slots between any two pieces
     def get_path_between(self, base_piece:Piece, piece:Piece):
         if base_piece.x >= piece.x:
             big_x = base_piece.x

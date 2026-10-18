@@ -1,16 +1,12 @@
 # Overview
 
-{Important!  Do not say in this section that this is college assignment.  Talk about what you are trying to accomplish as a software engineer to further your learning.}
-
 The game that I programmed is Chess. Due to time contrainsts it stills has a few bugs in it, but the overall functioning is there. Some features I implemented was making it impossible to do illegal moves (except in the case of bugs). I have an inidicator for whose turn it is. When someone has no possible moves left or if their King has been captured, text will display the other player as having won. This is a two-player game.
 
 My purpose for writing this program was to help me improve my skills in game organization in programming and familiarizing myself with how the arcade module works and how I can use it to bring a program to visuals.
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Chess Game Demo Video](https://youtu.be/zUYv5EmxuvU)
 
 # Development Environment
-
-{Describe the tools that you used to develop the software}
 
 The primary tool that I used to help build this software was VSCode.
 I used the assistance of ChatGPT to help understand some of the deeper syntaxing of Python as I had to readjust to the lack of specificity compared to C#.
@@ -19,13 +15,11 @@ I used Python for the language of this project. Libraries included Arcade, Copy,
 
 # Useful Websites
 
-{Make a list of websites that you found helpful in this project}
 * [Python Arcade Tutorial](https://api.arcade.academy/en/stable/tutorials/platform_tutorial/index.html)
 * [ChatGPT - Python/Arcade Questions](https://chatgpt.com/share/6ad4260a-1b3c-83e8-a3c3-78b89282f2d3)
 
 # Future Work
 
-{Make a list of things that you need to fix, improve, and add in the future.}
 * Fixing the remaining bugs
 * Implementing best move function
 * Implementing Player vs Robot mode

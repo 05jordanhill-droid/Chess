@@ -5,8 +5,10 @@ if TYPE_CHECKING:
 from Board import *
 import math
 
+# direction is used in order to help keep track of proper offsetting without having to creat two Move variants of the same kind of move but for different sides of the board
+
 class Conditions:
-    # Conditions
+    # Common conditions
     def pawn_forward(piece:Piece):
         x = piece.x
         y = piece.y + (piece.direction * 1)
@@ -73,17 +75,21 @@ class Conditions:
                 
         return False
 
+    # General conditions for repeated use
     def special_move(piece:Piece, x:int, y:int, condition):
         if condition(piece, x, y):
             return True
         
         return False
-
+    # Overriding is based on order and previous functions can't be accessed in Python
     def special_move_(piece:Piece, condition):
         if condition(piece):
             return True
         
         return False
+    
+    def special_capture(piece:Piece, x_target:int, y_target:int):
+        return Conditions.special_move(piece, x_target, y_target, Conditions.capture)
 
     def capture(piece:Piece, x:int, y:int):
         if piece.in_bounds(piece.x + x, piece.y + y):
@@ -101,16 +107,9 @@ class Conditions:
 
         return False
 
-    def special_capture(piece:Piece, x_target:int, y_target:int):
-        return Conditions.special_move(piece, x_target, y_target, Conditions.capture)
 
     # Helpers
     def is_in_check(piece:Piece, base_piece=None):
-        # get_empties = False
-
-        # if piece.name == "empty":
-        #     get_empties = True
-
         for team in piece.board.teams:
             if piece.team == "null":
                 team_ = "null"
@@ -138,7 +137,7 @@ class Conditions:
         distance = (a**2 + b**2)**.5
         return distance
 
-
+    # Checks that spots between two pieces are clear
     def clear_shot(base_piece:Piece, piece:Piece):
         for check in base_piece.board.get_path_between(base_piece, piece):
             if check.name != "empty":
@@ -147,9 +146,10 @@ class Conditions:
         return True
 
 
-
+# Many special moves involve an extra moving of a piece that can be hard to take into account with turns. Using this class can implement extra functions that are ran alongside a particular move
 class ExtraFunctions:
     def move_other(piece, offset_x, offset_y, direction=True):
+        # castling direction is the same on either side of the board but the directional usage for my pawn capture functions require the direction to flip
         if direction:
             offset_x = offset_x * piece.direction
             offset_y = offset_y * piece.direction

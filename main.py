@@ -5,8 +5,6 @@ import arcade
 
 
 def main():
-    """Main function"""
-
     game = ArcadeSupport.setup(500, 300, "Chess", StandardBoard())
     game.run()
     
