@@ -4,7 +4,7 @@ The game that I programmed is Chess. Due to time contrainsts it stills has a few
 
 My purpose for writing this program was to help me improve my skills in game organization in programming and familiarizing myself with how the arcade module works and how I can use it to bring a program to visuals.
 
-[Chess Game Demo Video](https://youtu.be/18qKHvlMZYM)
+[Chess Game Demo Video](https://youtu.be/FZT6pb9C7i8)
 
 # Development Environment
 
